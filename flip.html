@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sippi Diary 1895: Sample Flip Book</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #f4f1ea;
+      color: #222;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 40px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .intro {
+      text-align: center;
+      color: #555;
+      max-width: 800px;
+      margin: 0 auto 24px;
+      line-height: 1.5;
+    }
+
+    .book-shell {
+      background: #e7e0d2;
+      border: 1px solid #c9c1b4;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      padding: 20px;
+    }
+
+    .viewer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1b1b1b;
+      border-radius: 10px;
+      min-height: 72vh;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .viewer img {
+      max-width: 100%;
+      max-height: 72vh;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+      background: white;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      background: #4f2683;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3d1d66;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      min-width: 180px;
+      text-align: center;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .caption {
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .jump {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input[type="number"] {
+      width: 80px;
+      padding: 8px;
+      font-size: 1rem;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .viewer {
+        min-height: 60vh;
+        padding: 12px;
+      }
+
+      .viewer img {
+        max-height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Dr. Sippi Diary, 1895</h1>
+    <p class="intro">
+      Sample flip-book viewer for diary page images. Use the buttons, arrow keys,
+      or jump directly to a page in this sample set.
+    </p>
+
+    <div class="book-shell">
+      <div class="viewer">
+        <img id="pageImage" src="" alt="Diary page image">
+      </div>
+
+      <div class="controls">
+        <button id="firstBtn">First</button>
+        <button id="prevBtn">Previous</button>
+        <div class="page-info" id="pageInfo">Page 1 of 1</div>
+        <button id="nextBtn">Next</button>
+        <button id="lastBtn">Last</button>
+      </div>
+
+      <div class="jump">
+        <label for="pageJump">Go to sample page</label>
+        <input type="number" id="pageJump" min="1">
+        <button id="jumpBtn">Go</button>
+      </div>
+
+      <p class="caption" id="pageCaption"></p>
+    </div>
+  </div>
+
+  <script>
+    // Put your image files in the same folder as this HTML file
+    // or change the paths below to match your folder structure.
+
+    const pages = [
+      {
+        src: "DR-SIPPI-DIARY_1895_131_R.JPG",
+        label: "Sample 1: April 29, 1895"
+      },
+      {
+        src: "DR-SIPPI-DIARY_1895_132_L.JPG",
+        label: "Sample 2: April 30, 1895"
+      },
+      {
+        src: "DR-SIPPI-DIARY_1895_136_L.JPG",
+        label: "Sample 3: May 4, 1895"
+      },
+      {
+        src: "DR-SIPPI-DIARY_1895_138_L.JPG",
+        label: "Sample 4: May 6, 1895"
+      },
+      {
+        src: "DR-SIPPI-DIARY_1895_144_L(2).JPG",
+        label: "Sample 5: May 12, 1895"
+      },
+      {
+        src: "DR-SIPPI-DIARY_1895_145_R(1).JPG",
+        label: "Sample 6: May 13, 1895"
+      }
+    ];
+
+    let currentPage = 0;
+
+    const pageImage = document.getElementById("pageImage");
+    const pageInfo = document.getElementById("pageInfo");
+    const pageCaption = document.getElementById("pageCaption");
+
+    const firstBtn = document.getElementById("firstBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const lastBtn = document.getElementById("lastBtn");
+
+    const pageJump = document.getElementById("pageJump");
+    const jumpBtn = document.getElementById("jumpBtn");
+
+    function updatePage() {
+      const page = pages[currentPage];
+      pageImage.src = page.src;
+      pageImage.alt = page.label;
+      pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
+      pageCaption.textContent = page.label;
+
+      firstBtn.disabled = currentPage === 0;
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
+      lastBtn.disabled = currentPage === pages.length - 1;
+
+      pageJump.value = currentPage + 1;
+    }
+
+    firstBtn.addEventListener("click", () => {
+      currentPage = 0;
+      updatePage();
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < pages.length - 1) {
+        currentPage++;
+        updatePage();
+      }
+    });
+
+    lastBtn.addEventListener("click", () => {
+      currentPage = pages.length - 1;
+      updatePage();
+    });
+
+    jumpBtn.addEventListener("click", () => {
+      const target = Number(pageJump.value);
+      if (target >= 1 && target <= pages.length) {
+        currentPage = target - 1;
+        updatePage();
+      }
+    });
+
+    pageJump.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        jumpBtn.click();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" && currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+      if (event.key === "ArrowRight" && currentPage < pages.length - 1) {
+        currentPage++;
+        updatePage();
+      }
+    });
+
+    updatePage();
+  </script>
+</body>
+</html>
