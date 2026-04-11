@@ -4,7 +4,7 @@
 This project presents a digital facsimile of the 1895 diary of Dr. Charles Sippi.  
 The site provides a page-by-page viewing interface for high-resolution images of the original handwritten diary.
 
-🔗 View the site: https://YOURUSERNAME.github.io/sippi-diary/
+🔗 View the site: https://bibliojo.github.io/1895-Sippi-diary/
 
 ---
 
