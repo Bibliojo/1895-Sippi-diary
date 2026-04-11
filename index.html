@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sippi Diary 1895: Sample Flip Book</title>
+  <title>Sippi Diary 1895</title>
+
   <style>
     body {
       margin: 0;
@@ -101,38 +102,42 @@
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <h1>Dr. Sippi Diary, 1895</h1>
+
     <p class="intro">
       Use the buttons or arrow keys to move through the diary pages.
     </p>
 
     <div class="book-shell">
       <div class="viewer">
-        <img id="pageImage" src="" alt="Diary page image">
+        <img id="pageImage" src="" alt="Diary page">
       </div>
 
       <div class="controls">
         <button id="firstBtn">First</button>
         <button id="prevBtn">Previous</button>
-        <div class="page-info" id="pageInfo">Page 1 of 12</div>
+        <div class="page-info" id="pageInfo">Page 1</div>
         <button id="nextBtn">Next</button>
         <button id="lastBtn">Last</button>
       </div>
 
-      <p class="caption" id="pageCaption"></p>
+      <p class="caption">Digital facsimile viewer</p>
     </div>
   </div>
 
   <script>
-    const totalPages = 12;
+    const totalPages = 20;  // 👈 change this as you add more pages
+
     const imageFolder = "images/";
     const imageExtension = ".jpg";
 
     const pages = [];
+
     for (let i = 1; i <= totalPages; i++) {
-      const num = String(i).padStart(3, "0");
+      const num = String(i).padStart(5, "0"); // 👈 IMPORTANT: matches page00001.jpg
       pages.push(`${imageFolder}page${num}${imageExtension}`);
     }
 
@@ -151,41 +156,42 @@
       pageImage.alt = `Diary page ${currentPage + 1}`;
       pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
 
-      prevBtn.disabled = currentPage === 0;
       firstBtn.disabled = currentPage === 0;
+      prevBtn.disabled = currentPage === 0;
       nextBtn.disabled = currentPage === pages.length - 1;
       lastBtn.disabled = currentPage === pages.length - 1;
     }
 
-    firstBtn.addEventListener("click", () => {
+    firstBtn.onclick = function () {
       currentPage = 0;
       updatePage();
-    });
+    };
 
-    prevBtn.addEventListener("click", () => {
+    prevBtn.onclick = function () {
       if (currentPage > 0) {
         currentPage--;
         updatePage();
       }
-    });
+    };
 
-    nextBtn.addEventListener("click", () => {
+    nextBtn.onclick = function () {
       if (currentPage < pages.length - 1) {
         currentPage++;
         updatePage();
       }
-    });
+    };
 
-    lastBtn.addEventListener("click", () => {
+    lastBtn.onclick = function () {
       currentPage = pages.length - 1;
       updatePage();
-    });
+    };
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", function (event) {
       if (event.key === "ArrowLeft" && currentPage > 0) {
         currentPage--;
         updatePage();
       }
+
       if (event.key === "ArrowRight" && currentPage < pages.length - 1) {
         currentPage++;
         updatePage();
