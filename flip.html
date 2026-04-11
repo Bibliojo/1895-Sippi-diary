@@ -168,115 +168,41 @@
   </div>
 
   <script>
-    // Put your image files in the same folder as this HTML file
-    // or change the paths below to match your folder structure.
+const totalPages = 12;
+const imageFolder = "images/";
+const imageExtension = ".jpg";
 
-    const pages = [
-      {
-        src: "DR-SIPPI-DIARY_1895_131_R.JPG",
-        label: "Sample 1: April 29, 1895"
-      },
-      {
-        src: "DR-SIPPI-DIARY_1895_132_L.JPG",
-        label: "Sample 2: April 30, 1895"
-      },
-      {
-        src: "DR-SIPPI-DIARY_1895_136_L.JPG",
-        label: "Sample 3: May 4, 1895"
-      },
-      {
-        src: "DR-SIPPI-DIARY_1895_138_L.JPG",
-        label: "Sample 4: May 6, 1895"
-      },
-      {
-        src: "DR-SIPPI-DIARY_1895_144_L(2).JPG",
-        label: "Sample 5: May 12, 1895"
-      },
-      {
-        src: "DR-SIPPI-DIARY_1895_145_R(1).JPG",
-        label: "Sample 6: May 13, 1895"
-      }
-    ];
+const pages = [];
+for (let i = 1; i <= totalPages; i++) {
+  const num = String(i).padStart(3, "0");
+  pages.push(`${imageFolder}page${num}${imageExtension}`);
+}
 
-    let currentPage = 0;
+let currentPage = 0;
 
-    const pageImage = document.getElementById("pageImage");
-    const pageInfo = document.getElementById("pageInfo");
-    const pageCaption = document.getElementById("pageCaption");
+const pageImage = document.getElementById("pageImage");
+const pageInfo = document.getElementById("pageInfo");
 
-    const firstBtn = document.getElementById("firstBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const lastBtn = document.getElementById("lastBtn");
+function updatePage() {
+  pageImage.src = pages[currentPage];
+  pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
+}
 
-    const pageJump = document.getElementById("pageJump");
-    const jumpBtn = document.getElementById("jumpBtn");
-
-    function updatePage() {
-      const page = pages[currentPage];
-      pageImage.src = page.src;
-      pageImage.alt = page.label;
-      pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
-      pageCaption.textContent = page.label;
-
-      firstBtn.disabled = currentPage === 0;
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage === pages.length - 1;
-      lastBtn.disabled = currentPage === pages.length - 1;
-
-      pageJump.value = currentPage + 1;
-    }
-
-    firstBtn.addEventListener("click", () => {
-      currentPage = 0;
-      updatePage();
-    });
-
-    prevBtn.addEventListener("click", () => {
-      if (currentPage > 0) {
-        currentPage--;
-        updatePage();
-      }
-    });
-
-    nextBtn.addEventListener("click", () => {
-      if (currentPage < pages.length - 1) {
-        currentPage++;
-        updatePage();
-      }
-    });
-
-    lastBtn.addEventListener("click", () => {
-      currentPage = pages.length - 1;
-      updatePage();
-    });
-
-    jumpBtn.addEventListener("click", () => {
-      const target = Number(pageJump.value);
-      if (target >= 1 && target <= pages.length) {
-        currentPage = target - 1;
-        updatePage();
-      }
-    });
-
-    pageJump.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        jumpBtn.click();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowLeft" && currentPage > 0) {
-        currentPage--;
-        updatePage();
-      }
-      if (event.key === "ArrowRight" && currentPage < pages.length - 1) {
-        currentPage++;
-        updatePage();
-      }
-    });
-
+function nextPage() {
+  if (currentPage < pages.length - 1) {
+    currentPage++;
     updatePage();
-  </script>
+  }
+}
+
+function prevPage() {
+  if (currentPage > 0) {
+    currentPage--;
+    updatePage();
+  }
+}
+
+updatePage();
+</script>
 </body>
 </html>
