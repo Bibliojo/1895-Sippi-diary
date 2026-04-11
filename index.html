@@ -48,14 +48,11 @@
       border-radius: 10px;
       min-height: 72vh;
       padding: 20px;
-      overflow: hidden;
     }
 
     .viewer img {
       max-width: 100%;
       max-height: 72vh;
-      height: auto;
-      width: auto;
       object-fit: contain;
       box-shadow: 0 8px 24px rgba(0,0,0,0.28);
       background: white;
@@ -102,46 +99,13 @@
       color: #666;
       font-size: 0.95rem;
     }
-
-    .jump {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    input[type="number"] {
-      width: 80px;
-      padding: 8px;
-      font-size: 1rem;
-      border: 1px solid #bbb;
-      border-radius: 6px;
-    }
-
-    @media (max-width: 700px) {
-      h1 {
-        font-size: 1.6rem;
-      }
-
-      .viewer {
-        min-height: 60vh;
-        padding: 12px;
-      }
-
-      .viewer img {
-        max-height: 60vh;
-      }
-    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Dr. Sippi Diary, 1895</h1>
     <p class="intro">
-      Sample flip-book viewer for diary page images. Use the buttons, arrow keys,
-      or jump directly to a page in this sample set.
+      Use the buttons or arrow keys to move through the diary pages.
     </p>
 
     <div class="book-shell">
@@ -152,15 +116,9 @@
       <div class="controls">
         <button id="firstBtn">First</button>
         <button id="prevBtn">Previous</button>
-        <div class="page-info" id="pageInfo">Page 1 of 1</div>
+        <div class="page-info" id="pageInfo">Page 1 of 12</div>
         <button id="nextBtn">Next</button>
         <button id="lastBtn">Last</button>
-      </div>
-
-      <div class="jump">
-        <label for="pageJump">Go to sample page</label>
-        <input type="number" id="pageJump" min="1">
-        <button id="jumpBtn">Go</button>
       </div>
 
       <p class="caption" id="pageCaption"></p>
@@ -168,41 +126,73 @@
   </div>
 
   <script>
-const totalPages = 12;
-const imageFolder = "images/";
-const imageExtension = ".jpg";
+    const totalPages = 12;
+    const imageFolder = "images/";
+    const imageExtension = ".jpg";
 
-const pages = [];
-for (let i = 1; i <= totalPages; i++) {
-  const num = String(i).padStart(3, "0");
-  pages.push(`${imageFolder}page${num}${imageExtension}`);
-}
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      const num = String(i).padStart(3, "0");
+      pages.push(`${imageFolder}page${num}${imageExtension}`);
+    }
 
-let currentPage = 0;
+    let currentPage = 0;
 
-const pageImage = document.getElementById("pageImage");
-const pageInfo = document.getElementById("pageInfo");
+    const pageImage = document.getElementById("pageImage");
+    const pageInfo = document.getElementById("pageInfo");
 
-function updatePage() {
-  pageImage.src = pages[currentPage];
-  pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
-}
+    const firstBtn = document.getElementById("firstBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const lastBtn = document.getElementById("lastBtn");
 
-function nextPage() {
-  if (currentPage < pages.length - 1) {
-    currentPage++;
+    function updatePage() {
+      pageImage.src = pages[currentPage];
+      pageImage.alt = `Diary page ${currentPage + 1}`;
+      pageInfo.textContent = `Page ${currentPage + 1} of ${pages.length}`;
+
+      prevBtn.disabled = currentPage === 0;
+      firstBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
+      lastBtn.disabled = currentPage === pages.length - 1;
+    }
+
+    firstBtn.addEventListener("click", () => {
+      currentPage = 0;
+      updatePage();
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < pages.length - 1) {
+        currentPage++;
+        updatePage();
+      }
+    });
+
+    lastBtn.addEventListener("click", () => {
+      currentPage = pages.length - 1;
+      updatePage();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" && currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+      if (event.key === "ArrowRight" && currentPage < pages.length - 1) {
+        currentPage++;
+        updatePage();
+      }
+    });
+
     updatePage();
-  }
-}
-
-function prevPage() {
-  if (currentPage > 0) {
-    currentPage--;
-    updatePage();
-  }
-}
-
-updatePage();
-</script>
+  </script>
 </body>
 </html>
